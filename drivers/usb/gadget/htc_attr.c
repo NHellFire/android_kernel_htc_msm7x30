@@ -33,6 +33,7 @@ enum {
 	USB_FUNCTION_MODEM_MDM, /* 14 */
 	USB_FUNCTION_MTP36,
 	USB_FUNCTION_USBNET,
+	USB_FUNCTION_HID = 29,
 	USB_FUNCTION_AUTOBOT = 30,
 	USB_FUNCTION_RNDIS_IPT = 31,
 };
@@ -99,7 +100,10 @@ static struct usb_string_node usb_string_array[] = {
 		.usb_function_flag = 1 << USB_FUNCTION_MTP,
 		.name = "mtp",
 	},
-
+	{
+		.usb_function_flag = 1 << USB_FUNCTION_HID,
+		.name = "hid",
+	},
 };
 
 static int use_mfg_serialno;
@@ -377,6 +381,9 @@ int android_switch_function(unsigned func)
 				!strcmp(f->name, "usbnet"))
 			list_add_tail(&f->enabled_list, &dev->enabled_functions);
 #endif
+		else if ((func & (1 << USB_FUNCTION_HID)) &&
+				!strcmp(f->name, "hid"))
+			list_add_tail(&f->enabled_list, &dev->enabled_functions);
 	}
 
 	list_for_each_entry(f, &dev->enabled_functions, enabled_list)
